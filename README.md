@@ -35,14 +35,14 @@ graph TB
 
 ### 作成されるリソース一覧
 
-| スタック | リソース | 概算月額費用 (東京) |
-|---------|---------|-------------------|
-| `vpc` | VPC, Private Subnets x2, Security Groups | 無料 |
-| `db` | RDS PostgreSQL (db.t4g.micro, 20GB gp3) | ~$15 |
-| `fe` | S3 + CloudFront | ~$1 (低トラフィック時) |
-| `ecr` | ECR リポジトリ | ~$0 (少量保存時) |
-| `be` | App Runner (0.25vCPU, 0.5GB) | ~$5 (pause時は課金なし) |
-| `schedule` | EventBridge Scheduler | 無料 |
+| スタック   | リソース                                 | 概算月額費用 (東京)     |
+| ---------- | ---------------------------------------- | ----------------------- |
+| `vpc`      | VPC, Private Subnets x2, Security Groups | 無料                    |
+| `db`       | RDS PostgreSQL (db.t4g.micro, 20GB gp3)  | ~$15                    |
+| `fe`       | S3 + CloudFront                          | ~$1 (低トラフィック時)  |
+| `ecr`      | ECR リポジトリ                           | ~$0 (少量保存時)        |
+| `be`       | App Runner (0.25vCPU, 0.5GB)             | ~$5 (pause時は課金なし) |
+| `schedule` | EventBridge Scheduler                    | 無料                    |
 
 > 夜間停止スケジュールを有効にすると、DB + App Runner のコストをさらに抑制できます。
 
@@ -58,13 +58,13 @@ graph TB
 {
   "app": "node dist/bin/app.js",
   "context": {
-    "APP_NAME": "my-app",              // ← サービス名に変更（必須）
-    "VPC_CIDR": "10.110.0.0/24",      // ← 他チームと被らないCIDRを指定
-    "CREATE_BE_SERVICE": "false",      // ← BE作成時に "true" に変更
-    "ENABLE_SCHEDULE": "false",        // ← 夜間停止を有効にするなら "true"
+    "APP_NAME": "my-app", // ← サービス名に変更（必須）
+    "VPC_CIDR": "10.110.0.0/24", // ← 他チームと被らないCIDRを指定
+    "CREATE_BE_SERVICE": "false", // ← BE作成時に "true" に変更
+    "ENABLE_SCHEDULE": "false", // ← 夜間停止を有効にするなら "true"
     "SCHEDULE_WEEKDAYS_ONLY": "false", // ← 土日終日停止するなら "true"
-    "DB_BACKUP_RETENTION_DAYS": "1"    // ← バックアップ保持日数
-  }
+    "DB_BACKUP_RETENTION_DAYS": "1", // ← バックアップ保持日数
+  },
 }
 ```
 
@@ -260,15 +260,15 @@ cdk destroy --all
 
 ## トラブルシューティング
 
-| 症状 | 原因 | 対処 |
-|------|------|------|
-| `cdk bootstrap` で AccessDenied | AWS CLI の認証情報が無い or 権限不足 | `aws sts get-caller-identity` で確認。管理者に権限付与を依頼 |
-| `cdk deploy` で "Resource already exists" | 同名リソースが既に存在 | `APP_NAME` を別名に変更するか、既存リソースを削除 |
-| App Runner が "Health check failed" | アプリが 8080 で起動していない | ECR のイメージが正しいか確認。stub なら正常に動くはず |
-| App Runner が DB に接続できない | Security Group / Subnet の問題 | VPC スタックが正しくデプロイされているか確認 |
-| `cdk deploy` で "No export named..." | スタック間の依存が壊れている | 依存元スタックから順に再デプロイ（vpc → db → be） |
-| CloudFront で 403 エラー | S3 にファイルが無い | GitHub Actions で FE をデプロイ済みか確認 |
-| GitHub Actions で "ECR repository not found" | infra の ECR スタック未デプロイ | 先に `cdk deploy my-app-ecr` を実行 |
+| 症状                                         | 原因                                 | 対処                                                         |
+| -------------------------------------------- | ------------------------------------ | ------------------------------------------------------------ |
+| `cdk bootstrap` で AccessDenied              | AWS CLI の認証情報が無い or 権限不足 | `aws sts get-caller-identity` で確認。管理者に権限付与を依頼 |
+| `cdk deploy` で "Resource already exists"    | 同名リソースが既に存在               | `APP_NAME` を別名に変更するか、既存リソースを削除            |
+| App Runner が "Health check failed"          | アプリが 8080 で起動していない       | ECR のイメージが正しいか確認。stub なら正常に動くはず        |
+| App Runner が DB に接続できない              | Security Group / Subnet の問題       | VPC スタックが正しくデプロイされているか確認                 |
+| `cdk deploy` で "No export named..."         | スタック間の依存が壊れている         | 依存元スタックから順に再デプロイ（vpc → db → be）            |
+| CloudFront で 403 エラー                     | S3 にファイルが無い                  | GitHub Actions で FE をデプロイ済みか確認                    |
+| GitHub Actions で "ECR repository not found" | infra の ECR スタック未デプロイ      | 先に `cdk deploy my-app-ecr` を実行                          |
 
 ---
 

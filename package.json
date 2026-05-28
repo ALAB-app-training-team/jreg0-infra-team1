@@ -1,9 +1,9 @@
 {
-  "name": "sample-app-infra",
+  "name": "jreg0-infra",
   "version": "0.1.0",
   "private": true,
   "bin": {
-    "sample-app": "bin/app.js"
+    "jreg0": "bin/app.js"
   },
   "scripts": {
     "build": "tsc",
